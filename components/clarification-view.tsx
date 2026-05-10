@@ -29,7 +29,7 @@ export function ClarificationView({ data, onSelect }: ClarificationViewProps) {
     if (otherSelected && otherText.trim()) {
       onSelect(otherText.trim())
     } else if (selectedIndex !== null) {
-      onSelect(data.rewrites[selectedIndex], selectedIndex)
+      onSelect(data.rewrites[selectedIndex].query, selectedIndex)
     }
   }
 
@@ -69,7 +69,7 @@ export function ClarificationView({ data, onSelect }: ClarificationViewProps) {
                 </svg>
               )}
             </span>
-            <span className="leading-relaxed">{rewrite}</span>
+            <span className="leading-relaxed">{rewrite.query}</span>
           </button>
         ))}
 
