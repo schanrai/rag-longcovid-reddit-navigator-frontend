@@ -18,8 +18,12 @@ export default function Home() {
   )
 
   const handleClarificationSelect = useCallback(
-    (query: string, index?: number) => submitQuery(query, { selected_rewrite_index: index }),
-    [submitQuery]
+    (query: string, index?: number) => {
+      const original_query =
+        state.status === "clarification" ? state.data.original_query : undefined
+      submitQuery(query, { selected_rewrite_index: index, original_query })
+    },
+    [state, submitQuery]
   )
 
   const handleEditQuery = useCallback(

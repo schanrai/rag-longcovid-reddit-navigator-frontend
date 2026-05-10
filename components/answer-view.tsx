@@ -4,7 +4,8 @@ import { useState, useCallback, useRef, useEffect } from "react"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { Pencil, ExternalLink, ChevronUp, AlertCircle, Check, X } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { DISPLAY_SUBREDDIT } from "@/lib/constants"
+import { cn, formatSourceCreatedUtc, redditPermalinkHref, sourceDisplayScore } from "@/lib/utils"
 import type { QueryResponse, Source } from "@/lib/types"
 import { CitationTooltip, CitationSidebar, CitationModal } from "./citation-panel"
 
@@ -17,7 +18,7 @@ export function AnswerView({ data, onEditQuery }: AnswerViewProps) {
   const [activeTab, setActiveTab] = useState<"answer" | "links">("answer")
   const [openSource, setOpenSource] = useState<Source | null>(null)
   const [isEditing, setIsEditing] = useState(false)
-  const [editValue, setEditValue] = useState(data.rewritten_query)
+  const [editValue, setEditValue] = useState(data.original_query)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -45,7 +46,7 @@ export function AnswerView({ data, onEditQuery }: AnswerViewProps) {
     if (e.key === "Escape") handleEditCancel()
   }, [handleEditConfirm, handleEditCancel])
 
-  const sourceMap = new Map(data.sources.map((s) => [s.citation_number, s]))
+  const sourceMap = new Map(data.sources.map((s) => [s.n, s]))
 
   const handleOpenSource = useCallback((source: Source) => {
     setOpenSource(source)
@@ -163,9 +164,14 @@ export function AnswerView({ data, onEditQuery }: AnswerViewProps) {
                 remarkPlugins={[remarkGfm]}
                 components={{
                   p({ children }) {
-                    // Flatten children so we can intercept citation strings
+                    // Use <div> not <p>: CitationTooltip injects <div>/<p> for the hover card;
+                    // HTML forbids block elements inside <p> and causes hydration errors.
                     const processed = processChildren(children, renderAnswerContent)
-                    return <p className="text-sm text-foreground leading-relaxed mb-4">{processed}</p>
+                    return (
+                      <div role="paragraph" className="text-sm text-foreground leading-relaxed mb-4">
+                        {processed}
+                      </div>
+                    )
                   },
                   h2({ children }) {
                     return <h2 className="text-base font-semibold text-foreground mt-6 mb-3">{children}</h2>
@@ -206,40 +212,34 @@ export function AnswerView({ data, onEditQuery }: AnswerViewProps) {
             <div className="animate-in fade-in duration-200 space-y-3">
               {data.sources.map((source) => (
                 <div
-                  key={source.citation_number}
+                  key={source.n}
                   className="rounded-xl border border-border bg-card p-4"
                 >
                   <div className="flex items-start gap-3">
                     <span className="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 rounded text-[11px] font-semibold bg-accent text-primary border border-primary/20 mt-0.5">
-                      {source.citation_number}
+                      {source.n}
                     </span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-primary mb-0.5">{source.subreddit}</p>
+                      <p className="text-xs font-semibold text-primary mb-0.5">{DISPLAY_SUBREDDIT}</p>
                       <p className="text-sm font-medium text-foreground leading-snug mb-2">
                         {source.post_title}
                       </p>
                       <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 mb-3">
-                        &ldquo;{source.chunk_text}&rdquo;
+                        &ldquo;{source.text}&rdquo;
                       </p>
                       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex items-center gap-3 text-xs text-muted-foreground">
                           <span className="capitalize bg-secondary px-2 py-0.5 rounded-full">
                             {source.chunk_type}
                           </span>
-                          <span>
-                            {new Date(source.date).toLocaleDateString("en-GB", {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </span>
+                          <span>{formatSourceCreatedUtc(source.created_utc)}</span>
                           <span className="flex items-center gap-1">
                             <ChevronUp className="h-3 w-3" />
-                            {source.score.toLocaleString()}
+                            {sourceDisplayScore(source).toLocaleString()}
                           </span>
                         </div>
                         <a
-                          href={source.reddit_url}
+                          href={redditPermalinkHref(source.permalink)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 text-xs font-medium text-primary hover:underline w-fit self-end sm:self-auto"
