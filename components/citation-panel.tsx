@@ -5,7 +5,7 @@ import { X, ExternalLink } from "lucide-react"
 import { RedditUpvoteIcon } from "@/components/reddit-upvote-icon"
 import { DISPLAY_SUBREDDIT } from "@/lib/constants"
 import type { Source } from "@/lib/types"
-import { formatSourceCreatedRelative, redditPermalinkHref, sourceDisplayScore } from "@/lib/utils"
+import { formatSourceCreatedRelative, hasSpecificPermalink, redditPermalinkHref, sourceDisplayScore } from "@/lib/utils"
 
 function SourceMetaRow({ source }: { source: Source }) {
   const score = sourceDisplayScore(source)
@@ -55,7 +55,7 @@ export function CitationTooltip({ source, children: _children, onOpen }: Citatio
         onMouseEnter={show}
         onMouseLeave={hide}
         onClick={onOpen}
-        className="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 rounded text-[11px] font-semibold bg-accent text-primary border border-primary/20 hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer align-middle mx-0.5"
+        className="inline-flex items-center justify-center min-w-5 h-5 px-1 rounded text-[11px] font-semibold bg-accent text-primary border border-primary/20 hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer align-middle mx-0.5"
         aria-label={`Citation ${source.n}: ${ariaTitle}`}
       >
         {source.n}
@@ -100,10 +100,11 @@ export function CitationSidebar({ source, onClose }: CitationSidebarProps) {
   if (!source) return null
 
   const href = redditPermalinkHref(source.permalink)
+  const hasThread = hasSpecificPermalink(source.permalink)
 
   return (
     <aside
-      className="hidden lg:flex flex-col w-80 xl:w-96 flex-shrink-0 border-l border-border bg-card overflow-hidden animate-in slide-in-from-right duration-300"
+      className="hidden lg:flex flex-col w-80 xl:w-96 shrink-0 border-l border-border bg-card overflow-hidden animate-in slide-in-from-right duration-300"
       aria-label="Citation details"
     >
       <div className="flex items-center justify-between px-5 py-4 border-b border-border">
@@ -144,7 +145,7 @@ export function CitationSidebar({ source, onClose }: CitationSidebarProps) {
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-border text-sm font-medium text-foreground hover:bg-muted transition-colors"
         >
-          Go to Reddit post
+          {hasThread ? "Go to Reddit post" : "Open Reddit"}
           <ExternalLink className="h-3.5 w-3.5" />
         </a>
       </div>
@@ -163,6 +164,7 @@ export function CitationModal({ source, onClose }: CitationModalProps) {
   if (!source) return null
 
   const href = redditPermalinkHref(source.permalink)
+  const hasThread = hasSpecificPermalink(source.permalink)
 
   return (
     <div
@@ -214,7 +216,7 @@ export function CitationModal({ source, onClose }: CitationModalProps) {
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-border text-sm font-medium text-foreground hover:bg-muted transition-colors mb-4"
           >
-            Go to Reddit post
+            {hasThread ? "Go to Reddit post" : "Open Reddit"}
             <ExternalLink className="h-3.5 w-3.5" />
           </a>
         </div>

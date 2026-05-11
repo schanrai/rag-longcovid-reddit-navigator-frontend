@@ -6,9 +6,10 @@ import { POPULAR_QUERIES } from "@/lib/mock-data"
 
 interface HomePageProps {
   onSubmit: (query: string) => void
+  isLoading?: boolean
 }
 
-export function HomePage({ onSubmit }: HomePageProps) {
+export function HomePage({ onSubmit, isLoading = false }: HomePageProps) {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen px-4 pb-20">
       <div className="w-full max-w-2xl flex flex-col items-center">
@@ -26,6 +27,7 @@ export function HomePage({ onSubmit }: HomePageProps) {
         <SearchBox
           onSubmit={onSubmit}
           autoFocus
+          isLoading={isLoading}
           className="w-full mb-8"
         />
 

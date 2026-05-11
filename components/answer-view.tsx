@@ -12,6 +12,7 @@ import {
 import {
   cn,
   formatSourceCreatedRelative,
+  hasSpecificPermalink,
   redditPermalinkHref,
   sourceDisplayScore,
 } from "@/lib/utils"
@@ -116,14 +117,14 @@ export function AnswerView({ data, onEditQuery }: AnswerViewProps) {
                 />
                 <button
                   onClick={handleEditConfirm}
-                  className="flex-shrink-0 flex items-center justify-center h-7 w-7 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                  className="shrink-0 flex items-center justify-center h-7 w-7 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
                   aria-label="Confirm edit"
                 >
                   <Check className="h-3.5 w-3.5" />
                 </button>
                 <button
                   onClick={handleEditCancel}
-                  className="flex-shrink-0 flex items-center justify-center h-7 w-7 rounded-lg bg-secondary text-foreground hover:bg-secondary/80 transition-colors"
+                  className="shrink-0 flex items-center justify-center h-7 w-7 rounded-lg bg-secondary text-foreground hover:bg-secondary/80 transition-colors"
                   aria-label="Cancel edit"
                 >
                   <X className="h-3.5 w-3.5" />
@@ -136,7 +137,7 @@ export function AnswerView({ data, onEditQuery }: AnswerViewProps) {
                 </span>
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="flex-shrink-0 flex items-center gap-1 text-xs text-primary hover:underline mt-0.5"
+                  className="shrink-0 flex items-center gap-1 text-xs text-primary hover:underline mt-0.5"
                   aria-label="Edit query"
                 >
                   <Pencil className="h-3 w-3" />
@@ -258,7 +259,7 @@ export function AnswerView({ data, onEditQuery }: AnswerViewProps) {
                   className="rounded-xl border border-border bg-card p-4"
                 >
                   <div className="flex items-start gap-3">
-                    <span className="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 rounded text-[11px] font-semibold bg-accent text-primary border border-primary/20 mt-0.5">
+                    <span className="shrink-0 inline-flex items-center justify-center w-5 h-5 rounded text-[11px] font-semibold bg-accent text-primary border border-primary/20 mt-0.5">
                       {source.n}
                     </span>
                     <div className="flex-1 min-w-0">
@@ -299,7 +300,7 @@ export function AnswerView({ data, onEditQuery }: AnswerViewProps) {
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 text-xs font-medium text-primary hover:underline w-fit"
                         >
-                          Go to Reddit
+                          {hasSpecificPermalink(source.permalink) ? "Go to Reddit" : "Open Reddit"}
                           <ExternalLink className="h-3 w-3" />
                         </a>
                       </div>
@@ -345,7 +346,7 @@ function DisclaimerCallout({
     >
       <AlertCircle
         className={cn(
-          "flex-shrink-0 mt-0.5 h-4 w-4",
+          "shrink-0 mt-0.5 h-4 w-4",
           variant === "policy" ? "text-red-500" : "text-primary"
         )}
       />

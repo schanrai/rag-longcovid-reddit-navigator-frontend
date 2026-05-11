@@ -13,6 +13,11 @@ export function redditPermalinkHref(permalink: string): string {
   return `https://www.reddit.com/${p}`
 }
 
+/** True when the permalink resolves to a specific Reddit thread, not the homepage fallback. */
+export function hasSpecificPermalink(permalink: string): boolean {
+  return permalink.trim().length > 0
+}
+
 export function sourceDisplayScore(source: {
   comment_score: number | null
   post_score: number | null

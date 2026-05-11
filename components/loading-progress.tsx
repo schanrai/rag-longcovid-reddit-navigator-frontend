@@ -4,11 +4,11 @@ import { CheckCircle, XCircle, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { QueryStage } from "@/lib/types"
 
-const STAGES: { key: QueryStage; label: string; description: string }[] = [
-  { key: "rewriting", label: "Understanding", description: "Interpreting your question" },
-  { key: "searching", label: "Searching", description: "Finding relevant discussions" },
-  { key: "reading", label: "Reading", description: "Analysing community posts" },
-  { key: "synthesizing", label: "Synthesizing", description: "Generating your answer" },
+const STAGES: { key: QueryStage; label: string }[] = [
+  { key: "rewriting", label: "Understanding your question" },
+  { key: "searching", label: "Finding relevant discussions" },
+  { key: "reading", label: "Analysing community experiences" },
+  { key: "synthesizing", label: "Synthesizing your answer" },
 ]
 
 interface LoadingProgressProps {
@@ -36,7 +36,7 @@ export function LoadingProgress({ currentStage, failedStage }: LoadingProgressPr
                 isPending && "opacity-35"
               )}
             >
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 {isFailed ? (
                   <XCircle className="h-5 w-5 text-destructive" />
                 ) : isDone ? (
@@ -47,25 +47,18 @@ export function LoadingProgress({ currentStage, failedStage }: LoadingProgressPr
                   <div className="h-5 w-5 rounded-full border-2 border-border" />
                 )}
               </div>
-              <div>
-                <p
-                  className={cn(
-                    "text-sm font-medium",
-                    isFailed
-                      ? "text-destructive"
-                      : isActive
-                      ? "text-foreground"
-                      : isDone
-                      ? "text-muted-foreground"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {stage.label}
-                </p>
-                {isActive && !isFailed && (
-                  <p className="text-xs text-muted-foreground mt-0.5">{stage.description}</p>
+              <p
+                className={cn(
+                  "text-sm font-medium",
+                  isFailed
+                    ? "text-destructive"
+                    : isActive
+                    ? "text-foreground"
+                    : "text-muted-foreground"
                 )}
-              </div>
+              >
+                {stage.label}
+              </p>
             </div>
           )
         })}

@@ -39,12 +39,12 @@ export default function Home() {
 
   // Idle → show homepage
   if (state.status === "idle") {
-    return <HomePage onSubmit={handleSubmit} />
+    return <HomePage onSubmit={handleSubmit} isLoading={state.status === "loading"} />
   }
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
-      <AppHeader onNewSearch={reset} />
+      <AppHeader onNewSearch={reset} isLoading={state.status === "loading"} />
 
       <div className="flex-1 min-h-0 flex flex-col">
         {state.status === "loading" && (
