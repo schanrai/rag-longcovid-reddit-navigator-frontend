@@ -3,9 +3,18 @@
 import { useState, useCallback, useRef, useEffect } from "react"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
-import { Pencil, ExternalLink, ChevronUp, AlertCircle, Check, X } from "lucide-react"
-import { DISPLAY_SUBREDDIT } from "@/lib/constants"
-import { cn, formatSourceCreatedUtc, redditPermalinkHref, sourceDisplayScore } from "@/lib/utils"
+import { Pencil, ExternalLink, AlertCircle, Check, X } from "lucide-react"
+import { RedditUpvoteIcon } from "@/components/reddit-upvote-icon"
+import {
+  COMMUNITY_DISCLAIMER_DETAILED_MARKDOWN,
+  DISPLAY_SUBREDDIT,
+} from "@/lib/constants"
+import {
+  cn,
+  formatSourceCreatedRelative,
+  redditPermalinkHref,
+  sourceDisplayScore,
+} from "@/lib/utils"
 import type { QueryResponse, Source } from "@/lib/types"
 import { CitationTooltip, CitationSidebar, CitationModal } from "./citation-panel"
 
@@ -37,9 +46,9 @@ export function AnswerView({ data, onEditQuery }: AnswerViewProps) {
   }, [editValue, data.rewritten_query, onEditQuery])
 
   const handleEditCancel = useCallback(() => {
-    setEditValue(data.rewritten_query)
+    setEditValue(data.original_query)
     setIsEditing(false)
-  }, [data.rewritten_query])
+  }, [data.original_query])
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") handleEditConfirm()
@@ -47,6 +56,9 @@ export function AnswerView({ data, onEditQuery }: AnswerViewProps) {
   }, [handleEditConfirm, handleEditCancel])
 
   const sourceMap = new Map(data.sources.map((s) => [s.n, s]))
+  const longDisclaimerInAnswer = data.answer_markdown.includes(
+    "drawn from community discussions"
+  )
 
   const handleOpenSource = useCallback((source: Source) => {
     setOpenSource(source)
@@ -134,6 +146,26 @@ export function AnswerView({ data, onEditQuery }: AnswerViewProps) {
             )}
           </div>
 
+          {/* Policy / safety copy — pale red to distinguish from neutral disclaimer */}
+          {data.policy_block.type !== null && data.policy_block.markdown.trim() !== "" && (
+            <DisclaimerCallout
+              variant="policy"
+              className="mb-6"
+              aria-label={
+                data.policy_block.type === "emergency"
+                  ? "Important safety information"
+                  : "Prescriber and treatment context"
+              }
+            >
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={policyAndClosingMarkdownComponents}
+              >
+                {data.policy_block.markdown}
+              </ReactMarkdown>
+            </DisclaimerCallout>
+          )}
+
           {/* Tabs */}
           <div className="flex gap-1 p-1 bg-muted rounded-xl mb-6 w-fit">
             {(["answer", "links"] as const).map((tab) => (
@@ -194,16 +226,26 @@ export function AnswerView({ data, onEditQuery }: AnswerViewProps) {
                   },
                   blockquote({ children }) {
                     return (
-                      <blockquote className="mt-6 flex gap-3 rounded-xl bg-accent border border-primary/10 px-4 py-3 text-sm text-muted-foreground leading-relaxed">
-                        <AlertCircle className="flex-shrink-0 mt-0.5 h-4 w-4 text-primary" />
-                        <div>{children}</div>
-                      </blockquote>
+                      <DisclaimerCallout className="mt-6" aria-label="Community disclaimer">
+                        {children}
+                      </DisclaimerCallout>
                     )
                   },
                 }}
               >
                 {data.answer_markdown}
               </ReactMarkdown>
+
+              {!longDisclaimerInAnswer && (
+                <DisclaimerCallout className="mt-6" aria-label="Community disclaimer">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={policyAndClosingMarkdownComponents}
+                  >
+                    {COMMUNITY_DISCLAIMER_DETAILED_MARKDOWN}
+                  </ReactMarkdown>
+                </DisclaimerCallout>
+              )}
             </div>
           )}
 
@@ -224,25 +266,38 @@ export function AnswerView({ data, onEditQuery }: AnswerViewProps) {
                       <p className="text-sm font-medium text-foreground leading-snug mb-2">
                         {source.post_title}
                       </p>
-                      <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 mb-3">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground mb-3">
+                        <span className="capitalize bg-secondary px-2 py-0.5 rounded-full">
+                          {source.chunk_type}
+                        </span>
+                        {sourceDisplayScore(source) > 0 && (
+                            <span
+                              className="inline-flex items-center gap-1"
+                              title="Score (upvotes / post score)"
+                            >
+                              <RedditUpvoteIcon className="h-3 w-3 shrink-0 text-primary" />
+                              {sourceDisplayScore(source).toLocaleString()}
+                            </span>
+                          )}
+                        {source.num_comments != null && source.num_comments > 0 && (
+                          <span>{source.num_comments.toLocaleString()} comments</span>
+                        )}
+                        <span>{formatSourceCreatedRelative(source.created_utc)}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed line-clamp-4 mb-3 whitespace-pre-wrap">
                         &ldquo;{source.text}&rdquo;
                       </p>
-                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                          <span className="capitalize bg-secondary px-2 py-0.5 rounded-full">
-                            {source.chunk_type}
-                          </span>
-                          <span>{formatSourceCreatedUtc(source.created_utc)}</span>
-                          <span className="flex items-center gap-1">
-                            <ChevronUp className="h-3 w-3" />
-                            {sourceDisplayScore(source).toLocaleString()}
-                          </span>
-                        </div>
+                      {source.post_summary && (
+                        <p className="text-xs text-foreground/90 leading-relaxed mb-3 line-clamp-3">
+                          {source.post_summary}
+                        </p>
+                      )}
+                      <div className="flex justify-end">
                         <a
                           href={redditPermalinkHref(source.permalink)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-xs font-medium text-primary hover:underline w-fit self-end sm:self-auto"
+                          className="flex items-center gap-1 text-xs font-medium text-primary hover:underline w-fit"
                         >
                           Go to Reddit
                           <ExternalLink className="h-3 w-3" />
@@ -264,6 +319,61 @@ export function AnswerView({ data, onEditQuery }: AnswerViewProps) {
       <CitationModal source={openSource} onClose={handleCloseSource} />
     </div>
   )
+}
+
+function DisclaimerCallout({
+  className,
+  children,
+  variant = "neutral",
+  "aria-label": ariaLabel,
+}: {
+  className?: string
+  children: React.ReactNode
+  variant?: "neutral" | "policy"
+  "aria-label": string
+}) {
+  return (
+    <aside
+      className={cn(
+        "flex gap-3 rounded-xl px-4 py-3 text-sm leading-relaxed",
+        variant === "policy"
+          ? "bg-red-50 border border-red-200 text-red-900"
+          : "bg-accent border border-primary/10 text-muted-foreground",
+        className
+      )}
+      aria-label={ariaLabel}
+    >
+      <AlertCircle
+        className={cn(
+          "flex-shrink-0 mt-0.5 h-4 w-4",
+          variant === "policy" ? "text-red-500" : "text-primary"
+        )}
+      />
+      <div className="min-w-0 flex-1">{children}</div>
+    </aside>
+  )
+}
+
+const policyAndClosingMarkdownComponents = {
+  p({ children }: { children?: React.ReactNode }) {
+    return <div className="mb-2 last:mb-0">{children}</div>
+  },
+  strong({ children }: { children?: React.ReactNode }) {
+    return <strong className="font-semibold text-foreground">{children}</strong>
+  },
+  ul({ children }: { children?: React.ReactNode }) {
+    return (
+      <ul className="my-2 ml-4 list-disc space-y-1 marker:text-muted-foreground">{children}</ul>
+    )
+  },
+  ol({ children }: { children?: React.ReactNode }) {
+    return (
+      <ol className="my-2 ml-4 list-decimal space-y-1 marker:text-muted-foreground">{children}</ol>
+    )
+  },
+  li({ children }: { children?: React.ReactNode }) {
+    return <li>{children}</li>
+  },
 }
 
 // Helper: walk React children and process string nodes for citation replacement

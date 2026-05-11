@@ -1,12 +1,32 @@
 "use client"
 
 import { useState, useRef } from "react"
-import { X, ExternalLink, ChevronUp } from "lucide-react"
+import { X, ExternalLink } from "lucide-react"
+import { RedditUpvoteIcon } from "@/components/reddit-upvote-icon"
 import { DISPLAY_SUBREDDIT } from "@/lib/constants"
 import type { Source } from "@/lib/types"
-import { formatSourceCreatedUtc, redditPermalinkHref, sourceDisplayScore } from "@/lib/utils"
+import { formatSourceCreatedRelative, redditPermalinkHref, sourceDisplayScore } from "@/lib/utils"
 
-// ── Tooltip ──────────────────────────────────────────────────────────────────
+function SourceMetaRow({ source }: { source: Source }) {
+  const score = sourceDisplayScore(source)
+  return (
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+      <span className="capitalize bg-secondary px-2 py-0.5 rounded-full">{source.chunk_type}</span>
+      {score > 0 && (
+        <span className="inline-flex items-center gap-1" title="Score (upvotes / post score)">
+          <RedditUpvoteIcon className="h-3 w-3 shrink-0 text-primary" />
+          {score.toLocaleString()}
+        </span>
+      )}
+      {source.num_comments != null && source.num_comments > 0 && (
+        <span>{source.num_comments.toLocaleString()} comments</span>
+      )}
+      <span>{formatSourceCreatedRelative(source.created_utc)}</span>
+    </div>
+  )
+}
+
+// ── Tooltip (product: fixed subreddit + thread title + excerpt label + chunk text)
 
 interface CitationTooltipProps {
   source: Source
@@ -80,7 +100,6 @@ export function CitationSidebar({ source, onClose }: CitationSidebarProps) {
   if (!source) return null
 
   const href = redditPermalinkHref(source.permalink)
-  const score = sourceDisplayScore(source)
 
   return (
     <aside
@@ -106,14 +125,7 @@ export function CitationSidebar({ source, onClose }: CitationSidebarProps) {
             {source.post_title.trim() || "Discussion thread"}
           </p>
         </div>
-        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-          <span className="capitalize bg-secondary px-2 py-0.5 rounded-full">{source.chunk_type}</span>
-          <span>{formatSourceCreatedUtc(source.created_utc)}</span>
-          <span className="flex items-center gap-1">
-            <ChevronUp className="h-3 w-3" />
-            {score.toLocaleString()}
-          </span>
-        </div>
+        <SourceMetaRow source={source} />
         <div className="bg-muted rounded-xl p-3">
           <p className="text-xs text-muted-foreground mb-1 font-medium">Excerpt</p>
           <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
@@ -151,7 +163,6 @@ export function CitationModal({ source, onClose }: CitationModalProps) {
   if (!source) return null
 
   const href = redditPermalinkHref(source.permalink)
-  const score = sourceDisplayScore(source)
 
   return (
     <div
@@ -184,14 +195,7 @@ export function CitationModal({ source, onClose }: CitationModalProps) {
               {source.post_title.trim() || "Discussion thread"}
             </p>
           </div>
-          <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            <span className="capitalize bg-secondary px-2 py-0.5 rounded-full">{source.chunk_type}</span>
-            <span>{formatSourceCreatedUtc(source.created_utc)}</span>
-            <span className="flex items-center gap-1">
-              <ChevronUp className="h-3 w-3" />
-              {score.toLocaleString()}
-            </span>
-          </div>
+          <SourceMetaRow source={source} />
           <div className="bg-muted rounded-xl p-3">
             <p className="text-xs text-muted-foreground mb-1 font-medium">Excerpt</p>
             <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
