@@ -39,7 +39,7 @@ export default function Home() {
 
   // Idle → show homepage
   if (state.status === "idle") {
-    return <HomePage onSubmit={handleSubmit} isLoading={state.status === "loading"} />
+    return <HomePage onSubmit={handleSubmit} isLoading={false} />
   }
 
   return (
