@@ -57,9 +57,6 @@ export function AnswerView({ data, onEditQuery }: AnswerViewProps) {
   }, [handleEditConfirm, handleEditCancel])
 
   const sourceMap = new Map(data.sources.map((s) => [s.n, s]))
-  const longDisclaimerInAnswer = data.answer_markdown.includes(
-    "drawn from community discussions"
-  )
 
   const handleOpenSource = useCallback((source: Source) => {
     setOpenSource(source)
@@ -237,16 +234,14 @@ export function AnswerView({ data, onEditQuery }: AnswerViewProps) {
                 {data.answer_markdown}
               </ReactMarkdown>
 
-              {!longDisclaimerInAnswer && (
-                <DisclaimerCallout className="mt-6" aria-label="Community disclaimer">
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    components={policyAndClosingMarkdownComponents}
-                  >
-                    {COMMUNITY_DISCLAIMER_DETAILED_MARKDOWN}
-                  </ReactMarkdown>
-                </DisclaimerCallout>
-              )}
+              <DisclaimerCallout className="mt-6" aria-label="Community disclaimer">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={policyAndClosingMarkdownComponents}
+                >
+                  {COMMUNITY_DISCLAIMER_DETAILED_MARKDOWN}
+                </ReactMarkdown>
+              </DisclaimerCallout>
             </div>
           )}
 
