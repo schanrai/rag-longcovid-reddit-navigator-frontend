@@ -12,7 +12,27 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'Long Covid Compass',
   description: 'Navigate Long COVID through real-world experiences. AI-powered insights from thousands of Reddit discussions.',
-  generator: 'v0.app',
+  openGraph: {
+    title: 'Long Covid Compass',
+    description: 'Navigate Long COVID through real-world experiences. AI-powered insights from thousands of Reddit discussions.',
+    url: 'https://rag-longcovid-reddit-navigator-fron.vercel.app',
+    siteName: 'Long Covid Compass',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1440,
+        height: 560,
+        alt: 'Long Covid Compass — Navigate Long COVID through real-world experiences',
+      },
+    ],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Long Covid Compass',
+    description: 'Navigate Long COVID through real-world experiences. AI-powered insights from thousands of Reddit discussions.',
+    images: ['/og-image.png'],
+  },
 }
 
 export default function RootLayout({
