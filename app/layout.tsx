@@ -10,18 +10,18 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Long Covid Compass',
-  description: 'Navigate Long COVID through real-world experiences. AI-powered insights from thousands of Reddit discussions.',
+  title: 'Long Covid Compass — Navigate Long COVID through real experiences',
+  description: 'Navigate Long COVID through real-world experiences. AI-powered insights from thousands of online community discussions.',
   openGraph: {
-    title: 'Long Covid Compass',
-    description: 'Navigate Long COVID through real-world experiences. AI-powered insights from thousands of Reddit discussions.',
+    title: 'Long Covid Compass — Navigate Long COVID through real experiences',
+    description: 'Navigate Long COVID through real-world experiences. AI-powered insights from thousands of online community discussions.',
     url: 'https://rag-longcovid-reddit-navigator-fron.vercel.app',
     siteName: 'Long Covid Compass',
     images: [
       {
         url: '/og-image.jpg',
-        width: 1440,
-        height: 560,
+        width: 1200,
+        height: 630,
         alt: 'Long Covid Compass — Navigate Long COVID through real-world experiences',
       },
     ],
@@ -29,8 +29,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Long Covid Compass',
-    description: 'Navigate Long COVID through real-world experiences. AI-powered insights from thousands of Reddit discussions.',
+    title: 'Long Covid Compass — Navigate Long COVID through real experiences',
+    description: 'Navigate Long COVID through real-world experiences. AI-powered insights from thousands of online community discussions.',
     images: ['/og-image.jpg'],
   },
 }
