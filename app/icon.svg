@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Long Covid Compass mark">
+  <title>Long Covid Compass mark</title>
+
+  
+  <g fill="none" stroke="#F97316" stroke-width="6" stroke-linecap="round">
+    <path d="M 176.815 86.460 A 78 78 0 0 0 113.544 23.189"></path>
+    <path d="M 86.456 23.184 A 78 78 0 0 0 23.185 86.456"></path>
+    <path d="M 23.185 113.544 A 78 78 0 0 0 86.456 176.816"></path>
+    <path d="M 113.544 176.811 A 78 78 0 0 0 176.815 113.540"></path>
+  </g>
+
+  
+  <g fill="#F97316">
+    <circle cx="100" cy="22" r="7"></circle>
+    <circle cx="178" cy="100" r="7"></circle>
+    <circle cx="100" cy="178" r="7"></circle>
+    <circle cx="22" cy="100" r="7"></circle>
+  </g>
+
+  
+  <g transform="rotate(-45 100 100)">
+    
+    <path d="M 100 46 L 114 100 L 100 100 L 86 100 Z" fill="#F97316"></path>
+    
+    <path d="M 100 154 L 86 100 L 100 100 L 114 100 Z" fill="#0F172A"></path>
+    
+    <circle cx="100" cy="100" r="3" fill="#0F172A"></circle>
+  </g>
+</svg>
