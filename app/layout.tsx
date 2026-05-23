@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     siteName: 'Long Covid Compass',
     images: [
       {
-        url: '/og-image.png',
+        url: '/og-image.jpg',
         width: 1440,
         height: 560,
         alt: 'Long Covid Compass — Navigate Long COVID through real-world experiences',
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Long Covid Compass',
     description: 'Navigate Long COVID through real-world experiences. AI-powered insights from thousands of Reddit discussions.',
-    images: ['/og-image.png'],
+    images: ['/og-image.jpg'],
   },
 }
 
